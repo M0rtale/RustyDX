@@ -77,6 +77,8 @@ public:
 	Vector3 position;
 	ULONG64 head;
 	std::string name;
+	std::string objName;
 	INT16 tag;
+	INT flag;
 
 };

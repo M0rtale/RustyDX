@@ -49,7 +49,7 @@ bool OverlayWindow::Init()
 
 	if (!_Hwnd)
 	{
-		int a = GetLastError();
+		int a = GetLastError(); 
 		return false;
 	}
 	MARGINS temp_margins = { 0,0,GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN) };
@@ -65,8 +65,11 @@ bool OverlayWindow::Init()
 	ImGuiIO& io = ImGui::GetIO();
 
 	io.Fonts->AddFontFromMemoryTTF(g_fRubik, sizeof(g_fRubik), 16.0f, NULL, io.Fonts->GetGlyphRangesCyrillic());
-	m_pDefault = io.Fonts->AddFontFromMemoryTTF(g_fRubik, sizeof(g_fRubik), 15.0f, NULL, io.Fonts->GetGlyphRangesCyrillic());
-	m_pChinese = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\simhei.ttf", 20.f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+	m_pDefault = io.Fonts->AddFontFromMemoryTTF(g_fRubik, sizeof(g_fRubik), 20.0f, NULL, io.Fonts->GetGlyphRangesCyrillic());
+	// No chinese zone for now.
+	//m_pChinese = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\simhei.ttf", 20.f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+
+	m_pChinese = m_pDefault;
 
 	//¸Ä×ÖÌו
 

@@ -3,11 +3,6 @@
 #include <d3d11.h>
 #include <sstream>
 
-extern "C" ULONG64 Decrypt_Data(ULONG64 data);//多加了一个
-extern "C" ULONG64 Decrypt_Data1(ULONG64 data);
-extern "C" ULONG64 Decrypt_Data2(ULONG64 data);
-extern "C" ULONG64 Decrypt_RootComp(ULONG64 data); // Decrypt_Localactor
-
 //defining data
 int s_width = 2560;
 int s_height = 1440;

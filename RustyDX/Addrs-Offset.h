@@ -29,9 +29,37 @@
 
 #define BASEENT_NAME 0x4B0
 #define BASEENT_MODEL 0x80
+#define BASEENT_FLAG 0x528
 
 #define MODEL_TRANSFORM 0x40
 
 #define TRANSFORM_BONE 0x20
 
 #define BONE_WORLD 0x10
+
+//& sets state, | 
+
+enum PlayerFlags
+{
+	Unused1 = 1,
+	Unused2 = 2,
+	IsAdmin = 4,
+	ReceivingSnapshot = 8,
+	Sleeping = 16,
+	Spectating = 32,
+	Wounded = 64,
+	IsDeveloper = 128,
+	Connected = 256,
+	VoiceMuted = 512,
+	ThirdPersonViewmode = 1024,
+	EyesViewmode = 2048,
+	ChatMute = 4096,
+	NoSprint = 8192,
+	Aiming = 16384,
+	DisplaySash = 32768,
+	Relaxed = 65536,
+	SafeZone = 131072,
+	Workbench1 = 1048576,
+	Workbench2 = 2097152,
+	Workbench3 = 4194304
+};

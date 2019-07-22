@@ -50,10 +50,7 @@ public:
 		const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
 		if (HRESULT result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext) != S_OK)
 		{
-			/*char Buffer[512];
-			sprintf_s(Buffer, "Calling MessageBoxA from DllMain @ %u!\n", result);
-			MessageBoxA(0, Buffer, "Hey!", MB_SYSTEMMODAL);
-			return E_FAIL;*/
+			throw "Create Device Failed!";
 		}
 
 		CreateRenderTarget();

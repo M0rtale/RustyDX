@@ -33,42 +33,17 @@ static DWORD GetPIDForProcess(const char *Str)
 int main()
 {
 	getchar();
-	printf(XorStr("BOIHOOK Deploying\n"));
+	printf(XorStr("HONK HONK Deploying\n"));
 
 	_Overlay = new OverlayWindow();
 	_Overlay->Init();
 
 	MSG msg;
 	GetMessage(&msg, nullptr, 0, 0);
-	printf(XorStr("BOIHOOK Deployed\n"));
+	printf(XorStr("HONK HONK Deployed\n"));
 	printf(XorStr("Don't act like a fucking dumbass\n"));
 	printf(XorStr("Enjoy your party\n"));
-	printf(XorStr("-------------------------------\n"));
-	printf(XorStr("\nF4 - AIM\n"));
 	printf(XorStr("\n-------------------------------"));
-
-	//ULONG64 character = 0;
-
-	//ULONG64 base = 0;
-	//ULONG64 shit = _Overlay->_DX_Show->_Game_Data->_Memory->Get_Model_Addr();
-	//printf("Image is: %llu \n", shit);
-
-	//base = _Overlay->_DX_Show->_Game_Data->_Memory->Read_Memory(shit, character);
-	//printf("Base is: %llu \n", base);
-
-	//base = _Overlay->_DX_Show->_Game_Data->_Memory->Read_Memory(shit + RUST_OBJECTMANAGER, character);
-	//printf("Manager is: %llu \n", base);
-
-	//Sleep(5000);
-
-	//base = _Overlay->_DX_Show->_Game_Data->_Memory->Read_Memory(shit + RUST_OBJECTMANAGER, character);
-	//printf("Manager is: %llu \n", base);
-
-	//base = _Overlay->_DX_Show->_Game_Data->_Memory->Read_Memory(shit, character);
-	//printf("Base is: %llu \n", base);
-
-	//getchar();
-	//return 0;
 
 	while (msg.message != WM_QUIT)
 	{
