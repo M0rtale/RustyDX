@@ -2,6 +2,8 @@
 
 #include "XorStr.h"
 
+//#define GET_ENT_ID 
+
 #define RUST_OBJECTMANAGER 0x15FF218
 
 #define OBJECTMANAGER_TAGGEDLISTFIRST 0x0
@@ -36,6 +38,14 @@
 #define TRANSFORM_BONE 0x20
 
 #define BONE_WORLD 0x10
+
+#define BASENETWORKABLE_CLIENTENTITIES 0x10
+#define CLIENTENTITIES_ENTITY_LIST 0x28
+#define ENTITY_LIST_SIZE 0x18
+#define ENTITY_LIST_OBJECTS_LIST 0x10
+#define OBJECTS_LIST_OFFSET 0x20 // first is localplayer
+#define UNKNOWNENTITY_FIRST 0x10
+#define FIRST_GAMEOBJ 0x30 // regular game obj.
 
 //& sets state, | 
 

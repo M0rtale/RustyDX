@@ -68,7 +68,7 @@ std::string GetFileVersion(const char* filename)
 	return "";
 }
 
-static int cycle = 0;
+static int cycle = 499;
 std::vector<std::string> WhiteList;
 ULONG64 temptargetHEAD = 0;
 static int crosshair = 1;
@@ -80,9 +80,10 @@ void DX_Show::Render()
 	ImGui::NewFrame();
 
 	cycle++;
-	if (cycle == 1000)
+	if (cycle == 500)
 	{
 		cycle = 0;
+		//printf("blyat\n");
 		_Game_Data->Get_Data();
 		//printf("blyat\n");
 	}
@@ -105,7 +106,7 @@ void DX_Show::Render()
 
 
 		ImGui::GetOverlayDrawList()->AddText(m_pChinese, 15.f, ImVec2(86, 86),
-			ImColor(.5f, 1.0f, 1.0f, 1.0f), XorStr("Welcome back Allen:)\nF3 - name\nF2 - crosshair\nz or mouse5 - aimbot\nIns - Whitelist\nDel - clear whitelist"));
+			ImColor(.5f, 1.0f, 1.0f, 1.0f), VariableText("Welcome back Allen:)\nF3 - name\nF2 - crosshair\nz or mouse5 - aimbot\nIns - Whitelist\nDel - clear whitelist\nRefresh Cycle: %i / 500", cycle).c_str());
 
 		ImGui::GetOverlayDrawList()->AddText(m_pChinese, 15.f, ImVec2(GetSystemMetrics(SM_CXSCREEN) / 2 - 9, GetSystemMetrics(SM_CYSCREEN) - 15),
 			ImColor(.5f, 1.0f, 1.0f, 1.0f), VariableText(u8"%s", GetFileVersion(szExeFileName)).c_str());
@@ -115,7 +116,7 @@ void DX_Show::Render()
 		for (int i = 0; i < _Game_Data->_Player_Vector.size(); i++)
 		{
 			Player ent = _Game_Data->_Player_Vector.at(i);
-			if (ent.tag != 6 || ent.BaseObject ==  _Game_Data->localplayer.BaseObject || ent.flag & PlayerFlags::Sleeping) // todo: fix this
+			if (ent.tag != 6 || ent.GameObject == _Game_Data->localplayer.GameObject || ent.flag & PlayerFlags::Sleeping) // todo: fix this
 			{
 				continue;
 			}
@@ -126,6 +127,7 @@ void DX_Show::Render()
 			Vector3 position = WorldToScreen(ent.position);
 			Vector3 head = WorldToScreen(get_bone_pos(ent.head));
 			float distance = _Game_Data->localplayer.position.Distance(ent.position);
+			//printf("Viable player named %s\n", ent.objName);
 			if (distance >= 325.f)
 				continue;
 			if (position.x > 1 && position.y > 1)
@@ -136,7 +138,7 @@ void DX_Show::Render()
 				else
 					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 15.f, ImVec2(position.x, position.y),
 						ImColor(1.0f, 1.0f, 1.0f, 1.0f), VariableText("%s %.2f", ent.name, distance).c_str());
-
+				 
 			}
 			float dist = 0;
 			dist = sqrtf(powf(GetSystemMetrics(SM_CXSCREEN) / 2 - head.x, 2.0) + powf(GetSystemMetrics(SM_CYSCREEN) / 2 - head.y, 2.0));
@@ -166,7 +168,7 @@ void DX_Show::Render()
 				if (strstr(ent.name.c_str(), "tree"))
 					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(165, 42, 42), VariableText("tree %.2f", distance).c_str());
 				if (strstr(ent.name.c_str(), "supply_drop"))
-					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(0,0,255), VariableText("supply_drop %.2f", distance).c_str());
+					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(0, 0, 255), VariableText("supply_drop %.2f", distance).c_str());
 				if (strstr(ent.name.c_str(), "cupboard"))
 					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(165, 42, 42), VariableText("cupboard %.2f", distance).c_str());
 				if (strstr(ent.name.c_str(), "stash"))
@@ -174,13 +176,13 @@ void DX_Show::Render()
 				if (strstr(ent.name.c_str(), "trash-pile"))
 					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(128, 128, 128), VariableText("trash %.2f", distance).c_str());
 				if (strstr(ent.name.c_str(), "loot_barrel"))
-					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(255,0,0), VariableText("barrel %.2f", distance).c_str());
+					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(255, 0, 0), VariableText("barrel %.2f", distance).c_str());
 				if (strstr(ent.name.c_str(), "hemp"))
 					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(0, 255, 0), VariableText("hemp %.2f", distance).c_str());
 				if (strstr(ent.name.c_str(), "crate"))
 					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(165, 42, 42), VariableText("crate %.2f", distance).c_str());
 				if (strstr(ent.name.c_str(), "pumpkin"))
-					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(255,118,25), VariableText("pumpkin %.2f", distance).c_str());
+					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(255, 118, 25), VariableText("pumpkin %.2f", distance).c_str());
 				if (strstr(ent.name.c_str(), "corn"))
 					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(255, 255, 0), VariableText("corn %.2f", distance).c_str());
 				if (strstr(ent.name.c_str(), "woodbox"))
@@ -189,11 +191,11 @@ void DX_Show::Render()
 					ImGui::GetOverlayDrawList()->AddText(m_pChinese, 12.f, ImVec2(pos.x, pos.y), ImColor(165, 42, 42), VariableText("box.wooden %.2f", distance).c_str());
 			}
 		}
-		 
+
 		if (GetAsyncKeyState(VK_INSERT) && nawa != "")
 			WhiteList.push_back(nawa);
 		if (GetAsyncKeyState(VK_DELETE))
-			WhiteList.clear(); 
+			WhiteList.clear();
 
 		if (temptargetHEAD)
 		{

@@ -63,5 +63,7 @@ int main()
 
 		if (!FindWindowA("Rusty_Rust", NULL)) // 如果透明窗口被关闭了
 			break;
+
+		Sleep(10);
 	}
 }

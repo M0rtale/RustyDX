@@ -82,16 +82,18 @@ public:
 	static ULONG64 _Camera_Addr;
 	static std::vector<Player> _Player_Vector;
 	static std::vector<Player> _Obj_Vector;
-	std::vector<ULONG64> _Index_Vector;
-	Player Camera;
+	ULONG64 *_Networked_List;
+	ULONG64 _Networked_size;
+	ULONG64 BaseNetworkable;
 	static Player localplayer;
-	std::vector<Player> Get_Data();
+	void Get_Data();
 	ULONG _Test_ULONG = 0;
 	float _Test_Float = 0;
 	ULONG64 _Test_ULONG64 = 0;
 	INT16 _Test_INT16 = 0;
 	Vector3 _Test_Vector3 = Vector3();
 	char* _Test_char = 0;
+	INT _Test_INT = 0;
 	D3DXMATRIX _Test_MATRIX = D3DXMATRIX();
 };
 
