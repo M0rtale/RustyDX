@@ -98,5 +98,11 @@ public:
 private:
 	ULONG _Loop = 0;
 	bool _AimBot = false;
+	bool _name = false;
+	bool _box = false;
+	bool _Animal = false;
+	bool _turret = false;
+	bool _Vehicle = false;
+	int _crosshair = 1;
 };
 

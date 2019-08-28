@@ -82,11 +82,14 @@ public:
 	static ULONG64 _Camera_Addr;
 	static std::vector<Player> _Player_Vector;
 	static std::vector<Player> _Obj_Vector;
+	static std::vector<Player> _Animal_Vector;
+	static std::vector<Player> _Turret_Vector;
+	static std::vector<Player> _Vehicle_Vector;
 	ULONG64 *_Networked_List;
 	ULONG64 _Networked_size;
 	ULONG64 BaseNetworkable;
 	static Player localplayer;
-	void Get_Data();
+	void Get_Data(bool box, bool animal, bool turret, bool vehicle);
 	ULONG _Test_ULONG = 0;
 	float _Test_Float = 0;
 	ULONG64 _Test_ULONG64 = 0;

@@ -6,6 +6,9 @@
 
 std::vector<Player> Game_Data::_Player_Vector = std::vector<Player>();
 std::vector<Player> Game_Data::_Obj_Vector = std::vector<Player>();
+std::vector<Player> Game_Data::_Animal_Vector = std::vector<Player>();
+std::vector<Player> Game_Data::_Turret_Vector = std::vector<Player>();
+std::vector<Player> Game_Data::_Vehicle_Vector = std::vector<Player>();
 ULONG64 Game_Data::_Camera_Addr = 0;
 Player Game_Data::localplayer = Player();
 
@@ -66,7 +69,7 @@ ULONG64 getBaseNetworked()
 			ULONG64 temp2 = Memory::_This->Read_Memory(temp1 + 0x30, _Test_ULONG64);
 			ULONG64 temp3 = Memory::_This->Read_Memory(temp2 + 0x30, _Test_ULONG64);
 			ULONG64 temp4 = Memory::_This->Read_Memory(temp3 + 0x30, _Test_ULONG64);
-			
+
 			BaseNetworkable = mono_field_static_get_value(temp4, 0);
 
 			//again, need the first
@@ -155,11 +158,8 @@ bool Game_Data::Hook_Start()
 	return true;
 }
 
-void Game_Data::Get_Data()
+void Game_Data::Get_Data(bool box, bool animal, bool turret, bool vehicle)
 {
-	//CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)get_data, NULL, NULL, NULL);
-	//CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)get_Active_List, NULL, NULL, NULL); TODO: fix this
-
 	if (BaseNetworkable == 0) // this shit is constant
 	{
 		BaseNetworkable = getBaseNetworked();
@@ -179,8 +179,6 @@ void Game_Data::Get_Data()
 	list += 0x20; // skip some junk
 
 	//printf("before copying\n");
-
-	if (_Networked_List != 0) free(_Networked_List);
 	_Networked_List = (ULONG64*)malloc(size * sizeof(ULONG64));
 
 	//printf("Nice, you didn't fuck up\n");
@@ -197,6 +195,10 @@ void Game_Data::Get_Data()
 
 	//first is localplayer
 	_Player_Vector.clear();
+	_Obj_Vector.clear();
+	_Animal_Vector.clear();
+	_Turret_Vector.clear();
+	_Vehicle_Vector.clear();
 	for (ULONG64 i = 1; i < size; i++)
 	{
 		Player currentPlayer = Player();
@@ -294,14 +296,162 @@ void Game_Data::Get_Data()
 
 				//currentPlayer.position =Memory::_This->Read_Memory(currentPlayer.VisualState + VISUALSTATE_POSITION, _Test_Vector3);
 			}
+			_Player_Vector.push_back(currentPlayer);
 		}
 		else if (currentPlayer.tag == 5) printf("Hey! I Found a Camera in this LIST!\n");
 		else
-			continue;
-		_Player_Vector.push_back(currentPlayer);
+		{
+
+			if (animal)
+			{
+				char world_name_char[100] = { 0 };
+				ULONG64 objectNamePor = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTNAMEPTR, _Test_ULONG64);
+				Memory::_This->Read_Memory(objectNamePor, world_name_char, 50);
+				if (strstr(world_name_char, "rust.ai/agents/boar"))
+				{
+					//printf("found crate");
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "boar";
+					_Animal_Vector.push_back(currentPlayer);
+					continue;
+				}
+
+				if (strstr(world_name_char, "rust.ai/agents/bear"))
+				{
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "bear";
+					_Animal_Vector.push_back(currentPlayer);
+					continue;
+				}
+			}
+			// vehicles/boats/rhib  vehicles/boats/rowboat
+			if (vehicle)
+			{
+				char world_name_char[100] = { 0 };
+				ULONG64 objectNamePor = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTNAMEPTR, _Test_ULONG64);
+				Memory::_This->Read_Memory(objectNamePor, world_name_char, 50);
+				if (strstr(world_name_char, "vehicles/boats/rhib"))
+				{
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "Speed Boat";
+					_Vehicle_Vector.push_back(currentPlayer);
+					continue;
+				}
+
+				if (strstr(world_name_char, "vehicles/boats/rowboat"))
+				{
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "Dinghy";
+					_Vehicle_Vector.push_back(currentPlayer);
+					continue;
+				}
+			}
+
+			if (turret)
+			{
+				char world_name_char[100] = { 0 };
+				ULONG64 objectNamePor = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTNAMEPTR, _Test_ULONG64);
+				Memory::_This->Read_Memory(objectNamePor, world_name_char, 50);
+				if (strstr(world_name_char, "prefabs/npc/autoturret"))
+				{
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "Auto Turret";
+					_Turret_Vector.push_back(currentPlayer);
+					continue;
+				}
+
+				if (strstr(world_name_char, "prefabs/npc/flame turret"))
+				{
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "Flame Turret";
+					_Turret_Vector.push_back(currentPlayer);
+					continue;
+				}
+			}
+
+			if (box)
+			{
+				char world_name_char[100] = { 0 };
+				ULONG64 objectNamePor = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTNAMEPTR, _Test_ULONG64);
+				Memory::_This->Read_Memory(objectNamePor, world_name_char, 50);
+#ifdef _DEBUG_PRINT
+				printf("%s\n", world_name_char);
+#endif
+
+				//if (strstr(world_name_char, "crate"))
+				//{
+				//	//printf("found crate");
+				//	ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+				//	ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+				//	currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+				//	currentPlayer.objName = "crate";
+				//	_Obj_Vector.push_back(currentPlayer);
+				//}
+				if (strstr(world_name_char, "woodbox"))
+				{
+					//printf("found woodbox");
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "woodbox";
+					_Obj_Vector.push_back(currentPlayer);
+					continue;
+				}
+				//else if (strstr(world_name_char, "sulfur"))
+				//{
+				//	//printf("found woodbox");
+				//	ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+				//	ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+				//	currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+				//	currentPlayer.objName = "sulfur";
+				//	_Obj_Vector.push_back(currentPlayer);
+				//}
+				else if (strstr(world_name_char, "box.wooden"))
+				{
+					//printf("found box.wooden");
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "box.wooden";
+					_Obj_Vector.push_back(currentPlayer);
+					continue;
+				}
+				else if (strstr(world_name_char, "cupboard"))
+				{
+					//printf("found cupboard");
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "cupboard";
+					_Obj_Vector.push_back(currentPlayer);
+					continue;
+				}
+				else if (strstr(world_name_char, "large wood storage"))
+				{
+					//printf("found cupboard");
+					ULONG64 objClass = Memory::_This->Read_Memory(currentPlayer.GameObject + GAMEOBJECT_OBJECTCLASS, _Test_ULONG64);
+					ULONG64 transform = Memory::_This->Read_Memory(objClass + OBJECTCLASS_TRANSFORM, _Test_ULONG64);
+					currentPlayer.VisualState = Memory::_This->Read_Memory(transform + TRANSFORM_VISUALSTATE, _Test_ULONG64);
+					currentPlayer.objName = "large wood storage";
+					_Obj_Vector.push_back(currentPlayer);
+					continue;
+				}
+			}
+		}
 	}
-
-
+	free(_Networked_List);
 	//printf("localplayer read");
 }
 

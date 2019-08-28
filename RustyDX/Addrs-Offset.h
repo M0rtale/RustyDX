@@ -3,6 +3,7 @@
 #include "XorStr.h"
 
 //#define GET_ENT_ID 
+//#define _DEBUG_PRINT
 
 #define RUST_OBJECTMANAGER 0x15FF218
 
