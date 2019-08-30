@@ -214,16 +214,12 @@ Vector3 get_bone_pos(uint64_t pTransform)
 	const __m128 mulVec1 = { 2.000, -2.000, -2.000, 0.000 };
 	const __m128 mulVec2 = { -2.000, -2.000, 2.000, 0.000 };
 
-	
-	//TransformAccessReadOnly pTransformAccessReadOnly = *(TransformAccessReadOnly *)((uintptr_t)pTransform + 0x38);
 	TransformAccessReadOnly pTransformAccessReadOnly;
 	Memory::_This->Read_Memory(pTransform + 0x38, &pTransformAccessReadOnly, sizeof(TransformAccessReadOnly));
 
-	//unsigned int index = *(unsigned int *)((uintptr_t)pTransform + 0x40);
 	unsigned int index;
 	Memory::_This->Read_Memory(pTransform + 0x40, &index, sizeof(unsigned int));
 
-	//TransformData transformData = *(TransformData *)((uintptr_t)pTransformAccessReadOnly.pTransformData + 0x18);
 	TransformData transformData;
 	Memory::_This->Read_Memory(pTransformAccessReadOnly.pTransformData + 0x18, &transformData, sizeof(TransformData));
 
@@ -239,6 +235,7 @@ Vector3 get_bone_pos(uint64_t pTransform)
 		int pSafe = 0;
 		while (transformIndex >= 0 && pSafe++ < 200)
 		{
+
 			//Matrix34 matrix34 = *(Matrix34*)((ULONGLONG)transformData.pTransformArray + 0x30 * transformIndex);
 			Matrix34 matrix34;
 			Memory::_This->Read_Memory(transformData.pTransformArray + 0x30 * transformIndex, &matrix34, sizeof(Matrix34));
